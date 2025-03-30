@@ -113,8 +113,3 @@ npm run dev
 This project is built as part of a university **Web Engineering** course (6th Semester) and is intended for academic use.
 
 ---
-
-## 👨‍💻 Contributors
-
-- [Your Name] – Full Stack Developer  
-- [Instructor's Name] – Project Supervisor
