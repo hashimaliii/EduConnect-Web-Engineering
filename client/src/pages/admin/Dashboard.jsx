@@ -14,7 +14,6 @@ export default function AdminDashboard() {
                 const res = await axios.get(`${api}/api/admin/dashboard-stats`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                console.log('Dashboard Stats:', res.data);
                 setStats(res.data);
             } catch (err) {
                 console.error('Failed to fetch dashboard stats:', err.message);

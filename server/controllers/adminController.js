@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Session = require('../models/Session');
+const Verification = require('../models/Verification');
 
 // GET /api/admin/users
 const getAllUsers = async (req, res) => {
@@ -26,7 +27,8 @@ const getAdminDashboardStats = async (req, res) => {
     try {
         const totalUsers = await User.countDocuments();
         const totalTutors = await User.countDocuments({ role: 'tutor' });
-        const verifiedTutors = await User.countDocuments({ role: 'tutor', isVerified: true });
+        // const verifiedTutors = await User.countDocuments({ role: 'tutor', isVerified: true });
+        const verifiedTutors = await Verification.countDocuments({ status: "approved" });
 
         const totalSessions = await Session.countDocuments();
         const completedSessions = await Session.find({ status: 'completed' });

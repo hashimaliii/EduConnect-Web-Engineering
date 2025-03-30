@@ -1,4 +1,5 @@
 const Verification = require('../models/Verification');
+const User = require('../models/User');
 
 // Tutor submits documents
 const submitVerification = async (req, res) => {
@@ -31,15 +32,18 @@ const getAllPending = async (req, res) => {
 
 // Admin: update status
 const updateVerificationStatus = async (req, res) => {
-    const { status, adminComments } = req.body;
+    const { status, tutorId, adminComments } = req.body;
+    const user = await User.findById(tutorId);
     const verification = await Verification.findById(req.params.id);
     if (!verification) return res.status(404).json({ message: 'Verification not found' });
 
     verification.status = status;
     verification.adminComments = adminComments || '';
     verification.verifiedAt = new Date();
+    user.isVerified = status === "approved";
 
     await verification.save();
+    await user.save();
     res.json({ message: `Tutor ${status}` });
 };
 

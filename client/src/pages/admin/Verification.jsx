@@ -21,11 +21,12 @@ export default function VerificationReview() {
         }
     };
 
-    const handleUpdate = async (id, status, comments) => {
+    const handleUpdate = async (id, tutorId, status, comments) => {
         try {
             const token = localStorage.getItem('token');
             await axios.put(`${api}/api/verification/${id}`, {
                 status,
+                tutorId,
                 adminComments: comments
             }, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -73,12 +74,12 @@ export default function VerificationReview() {
                             <div style={{ marginTop: '10px' }}>
                                 <button
                                     style={{ marginRight: '10px' }}
-                                    onClick={() => handleUpdate(req._id, 'approved', statuses[req._id]?.comments || '')}
+                                    onClick={() => handleUpdate(req._id, req.tutor._id, 'approved', statuses[req._id]?.comments || '')}
                                 >
                                     Approve
                                 </button>
                                 <button
-                                    onClick={() => handleUpdate(req._id, 'rejected', statuses[req._id]?.comments || '')}
+                                    onClick={() => handleUpdate(req._id, req.tutor._id, 'rejected', statuses[req._id]?.comments || '')}
                                 >
                                     Reject
                                 </button>
