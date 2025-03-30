@@ -90,4 +90,4 @@ http://localhost:5000/api/
 
 ## 📬 Contact
 
-Developed by [Your Name] as part of the Web Engineering course, 6th Semester.
+Developed by Hashim Ali as part of the Web Engineering course, 6th Semester.
