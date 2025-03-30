@@ -1,12 +1,123 @@
-# React + Vite
+# 🌐 EduConnect Pakistan – Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the **frontend application** of the **EduConnect Pakistan** platform – a MERN-based system designed to connect students with tutors. Built with **React (Vite)**, the platform supports three types of users: **Students**, **Tutors**, and **Admins**, offering a responsive, user-friendly experience for all.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+### 👨‍🎓 Student
+- 🔍 Search tutors by subject, city, rating, price, and availability
+- 📌 Add tutors to wishlist
+- 📅 Book, reschedule, and cancel sessions
+- ✍️ Leave reviews and ratings
+- 📈 View booked sessions and wishlist
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 👨‍🏫 Tutor
+- 📝 Manage tutor profile and availability calendar
+- 📤 Submit verification documents
+- ✅ Accept or decline session bookings
+- 💵 Track session earnings
+
+### 🛡️ Admin
+- 📊 Dashboard with overall stats
+- ✅ View and manage tutor verifications
+- 👥 View/delete users
+- 📈 Access user, subject & session reports
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer        | Tech                        |
+|--------------|-----------------------------|
+| Frontend     | React + Vite                |
+| Styling      | Simple CSS (light theme)    |
+| Routing      | React Router DOM            |
+| HTTP Client  | Axios                       |
+| State Mgmt   | useState, useEffect (React) |
+
+---
+
+## 📁 Project Structure
+
+```
+client/
+├── public/
+├── src/
+│   ├── assets/
+│   │   ├── css/
+│   │   └── icons/
+│   ├── components/
+│   │   ├── common/
+│   │   ├── reviews/
+│   │   ├── sessions/
+│   │   ├── tutors/
+│   │   ├── wishlist/
+│   ├── context/
+│   ├── hooks/
+│   ├── pages/
+│   │   ├── auth/
+│   │   ├── student/
+│   │   ├── tutor/
+│   │   ├── admin/
+│   ├── utils/
+│   └── main.jsx
+```
+
+---
+
+## ⚙️ Setup & Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/educonnect-frontend.git
+cd educonnect-frontend
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env` file in the root of the project:
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+4. Run the development server:
+
+```bash
+npm run dev
+```
+
+The app will start at `http://localhost:5173`.
+
+---
+
+## 📬 API Reference
+
+All API requests are made to the backend hosted at:
+
+```
+http://localhost:5000/api
+```
+
+Ensure your backend server is running before interacting with the frontend.
+
+---
+
+## ✅ Status
+
+✅ Fully functional Student, Tutor, and Admin flows  
+🚀 Bonus: Tutor Availability Calendar included  
+📌 UI: Light-themed, clean interface
+
+---
+
+## 📄 License
+
+This project is part of a university Web Engineering course assignment and is meant for academic use.
