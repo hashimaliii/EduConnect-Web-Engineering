@@ -1,0 +1,20 @@
+.student-navbar {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 16px;
+    background-color: #0a74da;
+    color: white;
+    font-weight: bold;
+}
+
+.student-navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+}
+
+.student-navbar a:hover {
+    background-color: #095bb5;
+}

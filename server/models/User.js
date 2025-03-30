@@ -14,7 +14,13 @@ const UserSchema = new Schema({
     bio: { type: String },
     subjects: [{ type: String }],
     hourlyRate: { type: Number },
-    availability: { type: Array },
+    availability: [
+        {
+            day: { type: String },
+            from: { type: String },
+            to: { type: String }
+        }
+    ],
     teachingPreferences: { type: String, enum: ['online', 'in-person'] },
     isVerified: { type: Boolean, default: false },
     averageRating: { type: Number, default: 0 },
