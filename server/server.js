@@ -19,6 +19,8 @@ app.use('/api/sessions', require('./routes/sessionRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/earnings', require('./routes/earningsRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/wishlist', require('./routes/wishlistRoutes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
