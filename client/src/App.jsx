@@ -9,6 +9,7 @@ import TutorProfile from './pages/tutor/Profile';
 import TutorDashboard from './pages/tutor/Dashboard';
 import TutorSessions from './pages/tutor/Sessions';
 import TutorEarnings from './pages/tutor/Earnings';
+import TutorVerification from './pages/tutor/Verification';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/student/wishlist" element={<Wishlist />} />
         <Route path="/student/notifications" element={<Notifications />} />
         <Route path="/tutor/dashboard" element={<TutorDashboard />} />
+        <Route path="/tutor/verify" element={<TutorVerification />} />
         <Route path="/tutor/profile" element={<TutorProfile />} />
         <Route path="/tutor/sessions" element={<TutorSessions />} />
         <Route path="/tutor/earnings" element={<TutorEarnings />} />

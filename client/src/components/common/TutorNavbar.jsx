@@ -16,6 +16,7 @@ export default function TutorNavbar() {
             <Link to="/tutor/profile">My Profile</Link>
             <Link to="/tutor/sessions">Sessions</Link>
             <Link to="/tutor/earnings">Earnings</Link>
+            <Link to="/tutor/verify">Verification</Link>
             <button onClick={handleLogout} className="logout-btn">Logout</button>
         </nav>
     );
