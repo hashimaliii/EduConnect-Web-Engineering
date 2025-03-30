@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { submitReview, getTutorReviews } = require('../controllers/reviewController');
-const protect = require('../middleware/authMiddleware');
+const { protect } = require('../middleware/authMiddleware');
 const checkRole = require('../middleware/roleMiddleware');
 
 // Student submits a review

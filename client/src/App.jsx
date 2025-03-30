@@ -10,6 +10,10 @@ import TutorDashboard from './pages/tutor/Dashboard';
 import TutorSessions from './pages/tutor/Sessions';
 import TutorEarnings from './pages/tutor/Earnings';
 import TutorVerification from './pages/tutor/Verification';
+import AdminDashboard from './pages/admin/Dashboard';
+import VerificationReview from './pages/admin/Verification';
+import AdminReports from './pages/admin/Reports';
+import Users from './pages/admin/Users';
 
 function App() {
   return (
@@ -27,6 +31,10 @@ function App() {
         <Route path="/tutor/profile" element={<TutorProfile />} />
         <Route path="/tutor/sessions" element={<TutorSessions />} />
         <Route path="/tutor/earnings" element={<TutorEarnings />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/verification" element={<VerificationReview />} />
+        <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/admin/users" element={<Users />} />
       </Routes>
     </Router>
   );

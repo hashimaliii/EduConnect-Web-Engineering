@@ -6,7 +6,7 @@ const {
     getUserStats
 } = require('../controllers/reportController');
 
-const protect = require('../middleware/authMiddleware');
+const { protect } = require('../middleware/authMiddleware');
 const checkRole = require('../middleware/roleMiddleware');
 
 router.get('/subjects', protect, checkRole(['admin']), getPopularSubjects);

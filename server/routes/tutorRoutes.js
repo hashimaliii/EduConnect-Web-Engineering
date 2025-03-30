@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { searchTutors } = require('../controllers/tutorController');
 const { getTutorProfile, updateTutorProfile } = require('../controllers/tutorController');
-const protect = require('../middleware/authMiddleware');
+const { protect } = require('../middleware/authMiddleware');
 const checkRole = require('../middleware/roleMiddleware');
 
 router.get('/search', searchTutors);

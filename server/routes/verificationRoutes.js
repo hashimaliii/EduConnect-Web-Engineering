@@ -7,7 +7,7 @@ const {
     updateVerificationStatus
 } = require('../controllers/verificationController');
 
-const protect = require('../middleware/authMiddleware');
+const { protect } = require('../middleware/authMiddleware');
 const checkRole = require('../middleware/roleMiddleware');
 
 // Tutor submits verification
