@@ -5,6 +5,7 @@ import '../../assets/css/auth.css';
 const api = import.meta.env.VITE_API_URL;
 
 export default function Signup() {
+    const [availability, setAvailability] = useState([]);
     const [form, setForm] = useState({
         name: '',
         email: '',
@@ -19,6 +20,8 @@ export default function Signup() {
     });
 
     const [error, setError] = useState('');
+
+    const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -42,6 +45,7 @@ export default function Signup() {
             dataForTutor.hourlyRate = Number(form.hourlyRate);
             dataForTutor.teachingPreferences = form.teachingPreferences;
             dataForTutor.bio = form.bio;
+            dataForTutor.availability = availability;
         }
 
         try {
@@ -105,6 +109,49 @@ export default function Signup() {
 
                         <label>Bio:</label>
                         <textarea name="bio" value={form.bio} onChange={handleChange}></textarea>
+                        <label>Weekly Availability:</label>
+                        {daysOfWeek.map((day) => {
+                            const slot = availability.find((a) => a.day === day) || {};
+                            return (
+                                <div key={day} style={{ marginBottom: '10px' }}>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            checked={!!slot.day}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setAvailability([...availability, { day, from: '09:00', to: '17:00' }]);
+                                                } else {
+                                                    setAvailability(availability.filter((a) => a.day !== day));
+                                                }
+                                            }}
+                                        />
+                                        {` ${day}`}
+                                    </label>
+
+                                    {slot.day && (
+                                        <>
+                                            <label style={{ marginLeft: '10px' }}>From:</label>
+                                            <input
+                                                type="time"
+                                                value={slot.from}
+                                                onChange={(e) =>
+                                                    setAvailability(availability.map((a) => a.day === day ? { ...a, from: e.target.value } : a))
+                                                }
+                                            />
+                                            <label style={{ marginLeft: '10px' }}>To:</label>
+                                            <input
+                                                type="time"
+                                                value={slot.to}
+                                                onChange={(e) =>
+                                                    setAvailability(availability.map((a) => a.day === day ? { ...a, to: e.target.value } : a))
+                                                }
+                                            />
+                                        </>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </>
                 )}
 
