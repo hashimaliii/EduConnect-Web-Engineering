@@ -69,3 +69,21 @@ textarea {
     background-color: #fff;
     resize: vertical;
 }
+
+.session-form input,
+.session-form select {
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.session-form input:focus,
+.session-form select:focus {
+    outline: none;
+    border-color: #0a74da;
+    box-shadow: 0 0 0 1px #0a74da;
+}

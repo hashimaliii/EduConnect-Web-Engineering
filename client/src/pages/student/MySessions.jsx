@@ -137,7 +137,7 @@ export default function MySessions() {
                             {s.status === 'pending' && (
                                 <>
                                     {editMode === s._id ? (
-                                        <div style={{ marginTop: '10px' }}>
+                                        <div className="session-form">
                                             <input
                                                 type="date"
                                                 value={editData.date || ''}
