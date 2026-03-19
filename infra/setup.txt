@@ -3,7 +3,7 @@ kubectl apply -f mongoInfra
 
 kubectl get sc # check for storage names
 
-kubectl delete pvc mongo-volume-mongo-0
+kubectl delete pvc mongo-volume-mongo-0 mongo-volume-mongo-1 mongo-volume-mongo-2
 kubectl delete statefulset mongo
 
 kubectl exec -it mongo-0 -- mongosh --host mongo-1.mongo --eval "db.adminCommand('ping')" # should return { ok: 1 }
