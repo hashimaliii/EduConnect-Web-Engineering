@@ -12,8 +12,6 @@ services:
     build:
       context: server
       dockerfile: ./Dockerfile
-    environment:
-      NODE_ENV: production
     env_file:
       - server/.env
     ports:
@@ -21,6 +19,7 @@ services:
     depends_on:
       - mongodb
   client:
+    image: client
     build:
       context: client
       dockerfile: ./Dockerfile
