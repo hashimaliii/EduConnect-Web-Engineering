@@ -69,9 +69,9 @@ npm install
 npm run dev
 ```
 
-## 🧪 Docker Images on HashimAliii
-- Client Iamge: hashimaliii/client:v1.0
-- Server Iamge: hashimaliii/server:v1.0
+### 🧪 Docker Images on HashimAliii
+- Client Image: hashimaliii/client:v1.0
+- Server Image: hashimaliii/server:v1.0
 
 ---
 
