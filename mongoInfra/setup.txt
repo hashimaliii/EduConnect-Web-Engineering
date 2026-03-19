@@ -1,0 +1,13 @@
+minikube start
+kubectl apply -f mongoInfra
+
+kubectl get sc # check for storage names
+
+kubectl delete pvc mongo-volume-mongo-0
+kubectl delete statefulset mongo
+
+kubectl exec -it mongo-0 -- mongosh --host mongo-1.mongo --eval "db.adminCommand('ping')" # should return { ok: 1 }
+kubectl exec -it mongo-0 -- mongosh --eval "rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'mongo-0.mongo:27017' }, { _id: 1, host: 'mongo-1.mongo:27017' }, { _id: 2, host: 'mongo-2.mongo:27017' }] })"
+kubectl exec -it mongo-0 -- mongosh --eval "rs.status()"
+kubectl exec -it mongo-0 -- mongosh --eval "db.testCollection.insertOne({msg: 'Hello from K8s!'})"
+kubectl exec -it mongo-1 -- mongosh --eval "rs.secondaryOk(); db.testCollection.find()"

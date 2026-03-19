@@ -8,10 +8,7 @@ services:
       volumes:
           - mongodb:/data/db
   server:
-    image: server
-    build:
-      context: server
-      dockerfile: ./Dockerfile
+    image: hashimaliii/server:v1.0
     env_file:
       - server/.env
     ports:
@@ -19,10 +16,7 @@ services:
     depends_on:
       - mongodb
   client:
-    image: client
-    build:
-      context: client
-      dockerfile: ./Dockerfile
+    image: hashimaliii/client:v1.0
     env_file:
       - client/.env
     ports:
