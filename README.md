@@ -1,54 +1,27 @@
-# 🎓 EduConnect Pakistan – MERN Stack Tutoring Platform
+# 🎓 EduConnect Pakistan – MERN Stack Platform
 
-**EduConnect Pakistan** is a full-featured online tutoring and session management platform built using the **MERN stack**. It supports three user roles — Student, Tutor, and Admin — with dedicated dashboards, session management, verification workflows, and earnings tracking.
+**EduConnect Pakistan** is a full-featured online tutoring and session management platform built using the **MERN stack** for university students, tutors, and admins. This system enables seamless session booking, review sharing, and centralized admin control.
 
 ---
 
-## 🔗 Tech Stack
+## 🔗 Live Stack
 
-| Layer           | Technology                              |
-|-----------------|-----------------------------------------|
-| Frontend        | React 19 + Vite 8, Axios, React Router  |
-| Backend         | Node.js + Express.js + Nodemon          |
-| Database        | MongoDB 6.0 (Replica Set)               |
-| Auth            | JWT (JSON Web Tokens)                   |
-| Containerization| Docker (multi-stage builds)             |
-| Orchestration   | Kubernetes (Minikube)                   |
-| Image Registry  | Docker Hub (`hashimaliii`)              |
+| Layer     | Tech                             |
+|-----------|----------------------------------|
+| Frontend  | React (Vite), Axios, CSS         |
+| Backend   | Node.js, Express.js              |
+| Database  | MongoDB (Mongoose)               |
+| Auth      | JWT (JSON Web Tokens)            |
 
 ---
 
 ## 📦 Project Structure
 
 ```
-EduConnect-Web-Engineering/
-├── client/                  # React + Vite frontend
-│   ├── Dockerfile           # Multi-stage: Node build → nginx serve
-│   ├── .env                 # VITE_API_URL (baked at build time)
-│   └── src/
-│       ├── pages/
-│       │   ├── auth/        # Login, Signup
-│       │   ├── student/     # TutorSearch, MySessions, Wishlist, Notifications
-│       │   ├── tutor/       # Dashboard, Sessions, Earnings, Profile, Verification
-│       │   └── admin/       # Dashboard, Users, Reports, Verification
-│       └── components/
-├── server/                  # Express REST API
-│   ├── Dockerfile           # Node.js production image
-│   ├── server.js
-│   ├── routes/
-│   ├── controllers/
-│   ├── models/
-│   └── middleware/
-├── infra/                   # Kubernetes manifests
-│   ├── pv.yaml
-│   ├── secret.yaml
-│   ├── mongo-ss.yaml
-│   ├── server.yaml
-│   ├── client.yaml
-│   └── hpa.yaml
-├── compose.yaml             # Docker Compose (local dev)
-├── README-DOCKER.md         # Docker & Compose guide
-└── README-K8S.md            # Kubernetes deployment guide
+EduConnect-Pakistan/
+├── client/     # Frontend (React + Vite)
+├── server/     # Backend (Node.js + Express)
+├── README.md   # Project Documentation
 ```
 
 ---
@@ -56,116 +29,87 @@ EduConnect-Web-Engineering/
 ## 👥 User Roles & Capabilities
 
 ### 👨‍🎓 Students
-- Browse and filter tutors (subject, city, availability, rating)
-- Book, reschedule, and cancel sessions
+- Browse tutors by filters (subject, city, availability, rating)
+- Book/reschedule/cancel sessions
 - Add tutors to wishlist
 - Rate and review tutors
-- Receive notifications
 
 ### 👨‍🏫 Tutors
 - Manage profile, bio, availability, and hourly rate
-- Accept, decline, and complete booked sessions
+- Accept/decline/complete booked sessions
 - Track earnings
-- Submit documents for admin verification
+- Submit documents for verification
 
 ### 🛡️ Admins
-- Approve or reject tutor verification requests
-- View and manage all user accounts
-- Access platform analytics and reports
-- Monitor session trends, subject popularity, and city-wise growth
+- Approve/reject tutor verification requests
+- View/delete user accounts
+- Access full platform analytics & reports
+- Monitor subjects, session trends, and city-wise growth
 
 ---
 
-## ⚙️ Local Development Setup
+## ⚙️ Setup Instructions
 
-### Backend
-
+### 1️⃣ Backend (server/)
 ```bash
 cd server
 npm install
-# Ensure server/.env contains:
-# MONGO_URI=mongodb://localhost:27017/educonnect
-# PORT=5000
-# JWT_SECRET=supersecretkey123
+# Create .env with:
+# MONGO_URI=your_mongodb_connection_string
+# JWT_SECRET=your_jwt_secret
 npm run dev
 ```
 
-### Frontend
-
+### 2️⃣ Frontend (client/)
 ```bash
 cd client
 npm install
-# Ensure client/.env contains:
+# Create .env with:
 # VITE_API_URL=http://localhost:5000
 npm run dev
 ```
 
-Frontend runs at `http://localhost:5173`, backend at `http://localhost:5000`.
+---
+
+## 🧪 Features
+
+✅ JWT Auth for login/signup  
+✅ Tutor availability calendar  
+✅ Real-time earnings tracking  
+✅ Rate drop notification system  
+✅ Admin dashboard & verification system  
+✅ Fully responsive UI for all roles  
+✅ Bonus reports and analytics
 
 ---
 
-## 🐳 Docker & Docker Compose
+## 📁 Highlights of Each Module
 
-See **[README-DOCKER.md](./README-DOCKER.md)** for:
-- Building Docker images (server + client)
-- Running locally with Docker Compose
-- Environment variable configuration
+### 📂 Frontend (`/client`)
+- Built with React + Vite
+- Role-based pages under `/pages/student`, `/tutor`, `/admin`
+- API interaction using Axios
+- Clean custom CSS styling
 
-**Quick start:**
-```bash
-docker volume create mongodb
-docker compose up -d
-```
-
-| Service     | URL                   |
-|-------------|-----------------------|
-| Frontend    | http://localhost:5173 |
-| Backend API | http://localhost:5000 |
+### 📂 Backend (`/server`)
+- Express REST API
+- Role-based routing (`/routes/api`)
+- Mongoose schemas for User, Session, Review, Verification, etc.
+- Middleware for role checks (`protect`, `isTutor`, `isAdmin`, etc.)
 
 ---
 
-## ☸️ Kubernetes Deployment
+## 📊 Sample Reports (Admin)
 
-See **[README-K8S.md](./README-K8S.md)** for the full guide including HPA, persistent storage, and Windows/Docker driver specifics.
-
-**Quick start:**
-```bash
-minikube start
-minikube addons enable metrics-server
-kubectl apply -f infra/pv.yaml
-kubectl apply -f infra/secret.yaml
-kubectl apply -f infra/mongo-ss.yaml
-kubectl apply -f infra/server.yaml
-kubectl apply -f infra/client.yaml
-kubectl apply -f infra/hpa.yaml
-```
-
-Then initialize the MongoDB replica set:
-```bash
-kubectl exec -it mongo-0 -- mongosh --eval "rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'mongo-0.mongo:27017' }, { _id: 1, host: 'mongo-1.mongo:27017' }, { _id: 2, host: 'mongo-2.mongo:27017' }] })"
-```
-
-### Deployment Summary
-
-| Resource         | Count | Details                              |
-|------------------|-------|--------------------------------------|
-| Frontend pods    | 3     | nginx serving React SPA              |
-| Backend pods     | 3     | Express API                          |
-| MongoDB pods     | 3     | Replica set (1 PRIMARY, 2 SECONDARY) |
-| PersistentVolume | 3     | 1Gi each for MongoDB                 |
-| HPA              | 2     | min 2 / max 5 pods at 70% CPU        |
-
----
-
-## 🧪 Docker Images
-
-| Image                      | Description              |
-|----------------------------|--------------------------|
-| `hashimaliii/server:v1.0`  | Node.js backend          |
-| `hashimaliii/client:v3.0`  | nginx + React production build |
+- Session completion rate
+- User growth by month
+- Top subjects by popularity
+- Users by city distribution
 
 ---
 
 ## 🧾 License
 
-Built as part of a university **Web Engineering** course (6th Semester) — for academic use.
+This project is built as part of a university **Web Engineering** course (6th Semester) and is intended for academic use.
+
+---
