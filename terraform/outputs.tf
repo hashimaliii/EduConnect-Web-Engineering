@@ -29,3 +29,7 @@ output "s3_bucket_name" {
 output "dynamodb_table_name" {
   value = aws_dynamodb_table.terraform_locks.name
 }
+
+output "alb_dns_name" {
+  value = aws_lb.external_alb.dns_name
+}
