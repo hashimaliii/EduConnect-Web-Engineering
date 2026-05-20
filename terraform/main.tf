@@ -27,3 +27,64 @@ module "security" {
   environment = var.environment
   my_ip       = var.my_ip
 }
+
+resource "tls_private_key" "ssh_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "generated_key" {
+  key_name   = "${var.environment}-key"
+  public_key = tls_private_key.ssh_key.public_key_openssh
+}
+
+resource "local_file" "private_key" {
+  content         = tls_private_key.ssh_key.private_key_pem
+  filename        = "${path.module}/${var.environment}-key.pem"
+  file_permission = "0400" # Strict permissions required by SSH
+}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical's official AWS account ID
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+}
+
+module "web_server" {
+  source = "./modules/compute"
+
+  ami_id             = data.aws_ami.ubuntu.id
+  instance_type      = var.instance_type
+  subnet_id          = module.vpc.public_subnet_ids[0]
+  security_group_ids = [module.security.web_sg_id]
+  key_name           = aws_key_pair.generated_key.key_name
+  environment        = var.environment
+  server_name        = "web-server"
+
+  user_data_script = <<-EOF
+    #!/bin/bash
+    apt-get update -y
+    apt-get install nginx -y
+    systemctl start nginx
+    systemctl enable nginx
+    TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+    INSTANCE_ID=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/instance-id)
+    echo "<h1>Welcome to EduConnect Web Server</h1><p>Instance ID: $INSTANCE_ID</p>" > /var/www/html/index.html
+  EOF
+}
+
+module "db_server" {
+  source = "./modules/compute"
+
+  ami_id             = data.aws_ami.ubuntu.id
+  instance_type      = var.instance_type
+  subnet_id          = module.vpc.private_subnet_ids[0]
+  security_group_ids = [module.security.db_sg_id]
+  key_name           = aws_key_pair.generated_key.key_name
+  environment        = var.environment
+  server_name        = "db-server"
+}

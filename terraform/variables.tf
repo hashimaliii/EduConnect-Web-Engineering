@@ -23,3 +23,8 @@ variable "private_subnet_cidrs" {
 variable "my_ip" {
   type = string
 }
+
+variable "instance_type" {
+  type    = string
+  default = "t3.micro"
+}
