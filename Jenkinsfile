@@ -75,18 +75,18 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'aws-credentials', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                         sh """
                             # 1. Authenticate Docker to AWS ECR
-                            aws ecr get-login-password --region \${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin \${ECR_REPO}
+                            aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}
                             
                             # 2. Build the Docker Image
-                            docker build -t educonnect-app:\${env.BUILD_NUMBER} .
+                            docker build -t educonnect-app:${env.BUILD_NUMBER} .
                             
                             # 3. Tag the image with both the specific build number and 'latest'
-                            docker tag educonnect-app:\${env.BUILD_NUMBER} \${ECR_REPO}:\${env.BUILD_NUMBER}
-                            docker tag educonnect-app:\${env.BUILD_NUMBER} \${ECR_REPO}:latest
+                            docker tag educonnect-app:${env.BUILD_NUMBER} ${ECR_REPO}:${env.BUILD_NUMBER}
+                            docker tag educonnect-app:${env.BUILD_NUMBER} ${ECR_REPO}:latest
                             
                             # 4. Push both tags to the secure AWS registry
-                            docker push \${ECR_REPO}:\${env.BUILD_NUMBER}
-                            docker push \${ECR_REPO}:latest
+                            docker push ${ECR_REPO}:${env.BUILD_NUMBER}
+                            docker push ${ECR_REPO}:latest
                         """
                     }
                 }
