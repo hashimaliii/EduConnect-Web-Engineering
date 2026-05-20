@@ -1,0 +1,32 @@
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files (CRITICAL SECURITY RISK: Contains plaintext infrastructure data and secrets)
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfstate.backup.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude all .tfvars files (These contain your specific AWS values and potential secrets)
+*.tfvars
+*.tfvars.json
+
+# Ignore override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ignore saved plan files
+*.tfplan
+
+# Packer cache (For Task 6)
+packer_cache/
