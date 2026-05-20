@@ -44,20 +44,20 @@ resource "local_file" "private_key" {
   file_permission = "0400" # Strict permissions required by SSH
 }
 
-data "aws_ami" "ubuntu" {
+data "aws_ami" "custom_ubuntu" {
   most_recent = true
-  owners      = ["099720109477"] # Canonical's official AWS account ID
+  owners      = ["self"] # Tells AWS to look at YOUR account, not Canonical's
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+    values = ["educonnect-custom-ami-*"]
   }
 }
 
 module "web_server" {
   source = "./modules/compute"
 
-  ami_id             = data.aws_ami.ubuntu.id
+  ami_id             = data.aws_ami.custom_ubuntu.id
   instance_type      = var.instance_type
   subnet_id          = module.vpc.public_subnet_ids[0]
   security_group_ids = [module.security.web_sg_id]
@@ -80,7 +80,7 @@ module "web_server" {
 module "db_server" {
   source = "./modules/compute"
 
-  ami_id             = data.aws_ami.ubuntu.id
+  ami_id             = data.aws_ami.custom_ubuntu.id
   instance_type      = var.instance_type
   subnet_id          = module.vpc.private_subnet_ids[0]
   security_group_ids = [module.security.db_sg_id]

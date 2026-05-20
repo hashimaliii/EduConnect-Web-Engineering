@@ -1,6 +1,6 @@
 resource "aws_launch_template" "web_template" {
   name_prefix   = "${var.environment}-web-template"
-  image_id      = data.aws_ami.ubuntu.id
+  image_id      = data.aws_ami.custom_ubuntu.id
   instance_type = "t3.micro"
   key_name      = aws_key_pair.generated_key.key_name
 
