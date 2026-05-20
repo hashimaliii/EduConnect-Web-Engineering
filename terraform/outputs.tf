@@ -33,3 +33,11 @@ output "dynamodb_table_name" {
 output "alb_dns_name" {
   value = aws_lb.external_alb.dns_name
 }
+
+output "jenkins_controller_url" {
+  value = "http://${module.jenkins.controller_public_ip}:8080"
+}
+
+output "agent_private_ip" {
+  value = module.jenkins.agent_private_ip
+}

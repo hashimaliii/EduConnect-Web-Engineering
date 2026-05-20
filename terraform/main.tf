@@ -88,3 +88,30 @@ module "db_server" {
   environment        = var.environment
   server_name        = "db-server"
 }
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical's official AWS account ID
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+}
+
+module "jenkins" {
+  source = "./modules/jenkins"
+
+  # We use the standard Canonical Ubuntu AMI for Jenkins, NOT our custom Packer image
+  ami_id = data.aws_ami.ubuntu.id
+
+  # Jenkins requires more memory. t3.micro will crash running Java + Docker.
+  instance_type = "t3.small"
+
+  public_subnet_id  = module.vpc.public_subnet_ids[0]
+  private_subnet_id = module.vpc.private_subnet_ids[0]
+  controller_sg_id  = module.security.jenkins_controller_sg_id
+  agent_sg_id       = module.security.jenkins_agent_sg_id
+  key_name          = aws_key_pair.generated_key.key_name
+  environment       = var.environment
+}

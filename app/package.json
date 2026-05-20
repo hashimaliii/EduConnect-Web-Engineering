@@ -1,0 +1,18 @@
+{
+  "name": "educonnect-app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test:unit": "jest tests/unit --reporters=default --reporters=jest-junit",
+    "test:integration": "jest tests/integration --reporters=default --reporters=jest-junit"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "jest-junit": "^16.0.0",
+    "supertest": "^6.3.3"
+  }
+}
