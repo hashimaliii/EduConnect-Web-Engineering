@@ -7,6 +7,9 @@ pipeline {
     // Inject the Slack webhook credential without exposing it in plaintext
     environment {
         SLACK_WEBHOOK = credentials('slack-webhook')
+        AWS_CREDS = credentials('aws-credentials')
+        AWS_DEFAULT_REGION = 'us-east-1'
+        ECR_REPO = '694580673543.dkr.ecr.us-east-1.amazonaws.com/educonnect-app'
     }
 
     stages {
@@ -62,11 +65,30 @@ pipeline {
             }
         }
 
-        stage('Package') {
+        stage('Docker Build & Push') {
             steps {
-                echo 'Packaging application...'
                 dir('app') {
-                    sh 'tar -cvf app.tar *'
+                    // Install AWS CLI dynamically to avoid rebuilding the EC2 agent
+                    sh 'sudo apt-get update && sudo apt-get install -y awscli'
+                    
+                    // Inject AWS credentials as environment variables for the AWS CLI
+                    withCredentials([usernamePassword(credentialsId: 'aws-credentials', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                        sh """
+                            # 1. Authenticate Docker to AWS ECR
+                            aws ecr get-login-password --region \${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin \${ECR_REPO}
+                            
+                            # 2. Build the Docker Image
+                            docker build -t educonnect-app:\${env.BUILD_NUMBER} .
+                            
+                            # 3. Tag the image with both the specific build number and 'latest'
+                            docker tag educonnect-app:\${env.BUILD_NUMBER} \${ECR_REPO}:\${env.BUILD_NUMBER}
+                            docker tag educonnect-app:\${env.BUILD_NUMBER} \${ECR_REPO}:latest
+                            
+                            # 4. Push both tags to the secure AWS registry
+                            docker push \${ECR_REPO}:\${env.BUILD_NUMBER}
+                            docker push \${ECR_REPO}:latest
+                        """
+                    }
                 }
             }
         }
