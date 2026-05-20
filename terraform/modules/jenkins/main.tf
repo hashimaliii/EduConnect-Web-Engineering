@@ -54,10 +54,16 @@ resource "aws_instance" "jenkins_agent" {
   user_data = <<-EOF
     #!/bin/bash
     sudo apt-get update -y
+    
+    # Install Java, Git, Docker
     sudo apt-get install openjdk-21-jre git docker.io -y
     sudo systemctl enable docker
     sudo systemctl start docker
     sudo usermod -aG docker ubuntu
+    
+    # Install Node.js & NPM
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+    sudo apt-get install -y nodejs
   EOF
 
   tags = {
