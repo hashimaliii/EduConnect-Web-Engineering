@@ -30,3 +30,5 @@ terraform.rc
 
 # Packer cache (For Task 6)
 packer_cache/
+
+*.pem
