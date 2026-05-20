@@ -1,3 +1,5 @@
+@Library('jenkins-shared-library') _
+
 pipeline {
     // Target the specific agent
     agent { label 'linux-agent' }
@@ -76,24 +78,28 @@ pipeline {
         }
     }
 
-    // Post-build actions
+    // Post-build actions: Refactored Post-build actions using Shared Library
     post {
         always {
             archiveArtifacts artifacts: 'app/app.tar', allowEmptyArchive: true
         }
         success {
-            sh """
-                curl -X POST -H 'Content-type: application/json' \
-                --data '{"text":"✅ SUCCESS: Pipeline completed. See build: ${env.BUILD_URL}"}' \
-                ${SLACK_WEBHOOK}
-            """
+            notifySlack(
+                status: 'SUCCESS',
+                buildNumber: env.BUILD_NUMBER,
+                buildUrl: env.BUILD_URL,
+                branch: env.BRANCH_NAME,
+                commit: env.GIT_COMMIT
+            )
         }
         failure {
-            sh """
-                curl -X POST -H 'Content-type: application/json' \
-                --data '{"text":"❌ FAILURE: Pipeline failed. See build logs: ${env.BUILD_URL}"}' \
-                ${SLACK_WEBHOOK}
-            """
+            notifySlack(
+                status: 'FAILURE',
+                buildNumber: env.BUILD_NUMBER,
+                buildUrl: env.BUILD_URL,
+                branch: env.BRANCH_NAME,
+                commit: env.GIT_COMMIT
+            )
         }
     }
 }
