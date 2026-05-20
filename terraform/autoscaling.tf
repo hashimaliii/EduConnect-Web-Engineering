@@ -11,13 +11,13 @@ resource "aws_launch_template" "web_template" {
 
   user_data = base64encode(<<-EOF
     #!/bin/bash
+    # Skip installing Nginx, Packer already baked it in!
     apt-get update -y
-    apt-get install nginx stress-ng -y
-    systemctl start nginx
-    systemctl enable nginx
+    apt-get install stress-ng -y
     TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
     INSTANCE_ID=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/instance-id)
     echo "<h1>EduConnect Auto-Scaled Server</h1><p>Instance ID: $INSTANCE_ID</p>" > /var/www/html/index.html
+    systemctl restart nginx
   EOF
   )
 }
