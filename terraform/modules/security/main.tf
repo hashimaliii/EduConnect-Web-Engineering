@@ -103,6 +103,14 @@ resource "aws_security_group" "jenkins_agent_sg" {
   vpc_id      = var.vpc_id
 
   ingress {
+    description = "Jenkins Web UI and GitHub Webhooks"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     description     = "SSH from Jenkins Controller"
     from_port       = 22
     to_port         = 22
