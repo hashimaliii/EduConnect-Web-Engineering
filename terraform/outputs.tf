@@ -21,3 +21,11 @@ output "web_server_public_ip" {
 output "db_server_private_ip" {
   value = module.db_server.private_ip
 }
+
+output "s3_bucket_name" {
+  value = aws_s3_bucket.terraform_state.bucket
+}
+
+output "dynamodb_table_name" {
+  value = aws_dynamodb_table.terraform_locks.name
+}
