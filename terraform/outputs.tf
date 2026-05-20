@@ -41,3 +41,8 @@ output "jenkins_controller_url" {
 output "agent_private_ip" {
   value = module.jenkins.agent_private_ip
 }
+
+output "ecr_repository_url" {
+  value       = aws_ecr_repository.educonnect_app.repository_url
+  description = "The URL of the ECR repository"
+}

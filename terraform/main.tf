@@ -44,6 +44,15 @@ resource "local_file" "private_key" {
   file_permission = "0400" # Strict permissions required by SSH
 }
 
+resource "aws_ecr_repository" "educonnect_app" {
+  name                 = "educonnect-app"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
 data "aws_ami" "custom_ubuntu" {
   most_recent = true
   owners      = ["self"] # Tells AWS to look at YOUR account, not Canonical's
