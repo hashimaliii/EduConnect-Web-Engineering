@@ -19,3 +19,11 @@ module "vpc" {
   private_subnet_cidrs = var.private_subnet_cidrs
   environment          = var.environment
 }
+
+module "security" {
+  source = "./modules/security"
+
+  vpc_id      = module.vpc.vpc_id
+  environment = var.environment
+  my_ip       = var.my_ip
+}
