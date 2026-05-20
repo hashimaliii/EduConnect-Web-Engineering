@@ -31,4 +31,8 @@ terraform.rc
 # Packer cache (For Task 6)
 packer_cache/
 
+# Ignore specific environment SSH keys
+educonnect-key.pem
+
+# (Optional but recommended) Catch-all for any future private keys
 *.pem
