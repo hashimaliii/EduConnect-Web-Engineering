@@ -128,7 +128,7 @@ module "jenkins" {
 resource "aws_security_group" "k8s_sg" {
   name        = "k8s-cluster-sg"
   description = "Allow Kubernetes API and Web Traffic"
-  vpc_id      = var.vpc_id
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 22
@@ -160,10 +160,10 @@ resource "aws_security_group" "k8s_sg" {
 }
 
 resource "aws_instance" "k8s_cluster" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.small" 
-  key_name      = aws_key_pair.jenkins_key.key_name
-  subnet_id     = aws_subnet.public_subnet.id
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t3.small"
+  key_name               = aws_key_pair.generated_key.key_name
+  subnet_id              = module.vpc.public_subnet_ids[0]
   vpc_security_group_ids = [aws_security_group.k8s_sg.id]
 
   # This 1-liner installs Kubernetes automatically on boot

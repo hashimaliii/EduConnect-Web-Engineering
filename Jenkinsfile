@@ -93,18 +93,49 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy to K8s') {
             steps {
-                echo 'Deploy placeholder... We will build the Blue-Green deployment in Task 7'
+                // Retrieve BOTH the K8s config AND the AWS credentials
+                withCredentials([
+                    file(credentialsId: 'k8s-kubeconfig', variable: 'KUBECONFIG_FILE'),
+                    usernamePassword(credentialsId: 'aws-credentials', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')
+                ]) {
+                    sh """
+                        # 1. Install kubectl dynamically
+                        curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
+                        chmod +x kubectl
+                        sudo mv kubectl /usr/local/bin/
+
+                        # 2. Point kubectl to our specific cluster
+                        export KUBECONFIG=\${KUBECONFIG_FILE}
+                        
+                        # 3. Create the Docker Registry Secret in Kubernetes so it can pull from ECR
+                        # We extract just the registry URL from your ECR_REPO variable using cut
+                        REGISTRY_URL=\$(echo \${ECR_REPO} | cut -d'/' -f1)
+                        ECR_PASSWORD=\$(aws ecr get-login-password --region \${AWS_DEFAULT_REGION})
+                        
+                        kubectl create secret docker-registry ecr-secret \
+                            --docker-server=https://\${REGISTRY_URL} \
+                            --docker-username=AWS \
+                            --docker-password=\${ECR_PASSWORD} \
+                            --dry-run=client -o yaml | kubectl apply -f -
+                        
+                        # 4. Inject the specific Docker image URL into our YAML file
+                        sed -i "s|IMAGE_URL_PLACEHOLDER|\${ECR_REPO}:\${env.BUILD_NUMBER}|g" k8s/deployment.yaml
+
+                        # 5. Deploy the application to Kubernetes
+                        kubectl apply -f k8s/
+                        
+                        # 6. Wait for the pods to boot
+                        kubectl rollout status deployment/educonnect-app-deployment
+                    """
+                }
             }
         }
     }
 
-    // Post-build actions: Refactored Post-build actions using Shared Library
+    // Refactored Post-build actions using Shared Library
     post {
-        always {
-            archiveArtifacts artifacts: 'app/app.tar', allowEmptyArchive: true
-        }
         success {
             notifySlack(
                 status: 'SUCCESS',
@@ -124,4 +155,5 @@ pipeline {
             )
         }
     }
+}
 }
