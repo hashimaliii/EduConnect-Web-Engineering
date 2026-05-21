@@ -124,3 +124,61 @@ module "jenkins" {
   key_name          = aws_key_pair.generated_key.key_name
   environment       = var.environment
 }
+
+resource "aws_security_group" "k8s_sg" {
+  name        = "k8s-cluster-sg"
+  description = "Allow Kubernetes API and Web Traffic"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # SSH access
+  }
+
+  ingress {
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Jenkins needs access to the K8s API
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Public internet access to your app
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "k8s_cluster" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.small" 
+  key_name      = aws_key_pair.jenkins_key.key_name
+  subnet_id     = aws_subnet.public_subnet.id
+  vpc_security_group_ids = [aws_security_group.k8s_sg.id]
+
+  # This 1-liner installs Kubernetes automatically on boot
+  user_data = <<-EOF
+    #!/bin/bash
+    curl -sfL https://get.k3s.io | sh -
+    sleep 15
+    sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+  EOF
+
+  tags = {
+    Name = "EduConnect-K8s-Cluster"
+  }
+}
+
+output "k8s_public_ip" {
+  value = aws_instance.k8s_cluster.public_ip
+}
