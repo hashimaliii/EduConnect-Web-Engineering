@@ -119,10 +119,10 @@ pipeline {
                             --dry-run=client -o yaml | kubectl apply --insecure-skip-tls-verify -f -
                         
                         # 4. Inject the specific Docker image URL into our YAML file
-                        sed -i "s|IMAGE_URL_PLACEHOLDER|${ECR_REPO}:${env.BUILD_NUMBER}|g" k8s/deployment.yaml
+                        sed -i "s|IMAGE_URL_PLACEHOLDER|${ECR_REPO}:${env.BUILD_NUMBER}|g" aws-k8s/deployment.yaml
 
                         # 5. Deploy the application to Kubernetes
-                        kubectl apply --insecure-skip-tls-verify -f k8s/
+                        kubectl apply --insecure-skip-tls-verify -f aws-k8s/
                         
                         # 6. Wait for the pods to boot
                         kubectl rollout status deployment/educonnect-app-deployment --insecure-skip-tls-verify
