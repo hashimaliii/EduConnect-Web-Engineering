@@ -25,6 +25,6 @@ spec:
             memory: "128Mi"
           limits:
             cpu: "250m"
-            memory: "256mi"
+            memory: "256Mi"
       imagePullSecrets:
       - name: ecr-secret
