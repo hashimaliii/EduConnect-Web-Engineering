@@ -43,12 +43,65 @@ resource "aws_instance" "jenkins_controller" {
   }
 }
 
+# The specific permissions policy
+data "aws_iam_policy_document" "jenkins_ecr_policy" {
+  statement {
+    sid    = "AllowECRAuthAndPush"
+    effect = "Allow"
+    actions = [
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:GetRepositoryPolicy",
+      "ecr:DescribeRepositories",
+      "ecr:ListImages",
+      "ecr:DescribeImages",
+      "ecr:BatchGetImage",
+      "ecr:InitiateLayerUpload",
+      "ecr:UploadLayerPart",
+      "ecr:CompleteLayerUpload",
+      "ecr:PutImage"
+    ]
+    resources = ["*"] # GetAuthorizationToken requires *, strictly speaking
+  }
+}
+
+
+# Trust Policy allowing EC2 to assume this role
+data "aws_iam_policy_document" "ec2_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "jenkins_agent_role" {
+  name               = "jenkins-agent-ecr-role"
+  assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
+}
+
+resource "aws_iam_role_policy" "jenkins_ecr_attachment" {
+  name   = "jenkins-ecr-permissions"
+  role   = aws_iam_role.jenkins_agent_role.id
+  policy = data.aws_iam_policy_document.jenkins_ecr_policy.json
+}
+
+# 3. The Instance Profile to attach to the EC2 server
+resource "aws_iam_instance_profile" "jenkins_agent_profile" {
+  name = "jenkins-agent-profile"
+  role = aws_iam_role.jenkins_agent_role.name
+}
+
 resource "aws_instance" "jenkins_agent" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   subnet_id              = var.private_subnet_id
   vpc_security_group_ids = [var.agent_sg_id]
   key_name               = var.key_name
+  iam_instance_profile   = aws_iam_instance_profile.jenkins_agent_profile.name
 
   # The agent needs Java and Docker to execute pipelines
   user_data = <<-EOF

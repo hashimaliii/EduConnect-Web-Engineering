@@ -46,3 +46,7 @@ output "ecr_repository_url" {
   value       = aws_ecr_repository.educonnect_app.repository_url
   description = "The URL of the ECR repository"
 }
+
+output "k8s_public_ip" {
+  value = aws_instance.k8s_cluster.public_ip
+}

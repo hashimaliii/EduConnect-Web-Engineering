@@ -47,10 +47,47 @@ resource "local_file" "private_key" {
 resource "aws_ecr_repository" "educonnect_app" {
   name                 = "educonnect-app"
   image_tag_mutability = "MUTABLE"
+  force_delete         = true # Allows terraform destroy even if images exist
 
   image_scanning_configuration {
     scan_on_push = true
   }
+}
+
+resource "aws_ecr_lifecycle_policy" "educonnect_ecr_policy" {
+  repository = aws_ecr_repository.educonnect_app.name
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Expire untagged images older than 7 days",
+            "selection": {
+                "tagStatus": "untagged",
+                "countType": "sinceImagePushed",
+                "countUnit": "days",
+                "countNumber": 7
+            },
+            "action": {
+                "type": "expire"
+            }
+        },
+        {
+            "rulePriority": 2,
+            "description": "Keep last 10 images",
+            "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 10
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
 }
 
 data "aws_ami" "custom_ubuntu" {
@@ -177,8 +214,4 @@ resource "aws_instance" "k8s_cluster" {
   tags = {
     Name = "EduConnect-K8s-Cluster"
   }
-}
-
-output "k8s_public_ip" {
-  value = aws_instance.k8s_cluster.public_ip
 }

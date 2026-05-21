@@ -1,0 +1,31 @@
+pipeline {
+    agent { label 'linux-agent' }
+    
+    environment {
+        ALB_ARN = 'REPLACE_WITH_YOUR_ALB_ARN'
+        TG_BLUE_ARN = 'REPLACE_WITH_YOUR_TG_BLUE_ARN'
+        TG_GREEN_ARN = 'REPLACE_WITH_YOUR_TG_GREEN_ARN'
+    }
+
+    stages {
+        stage('Manual Rollback') {
+            steps {
+                sh '''#!/bin/bash
+                    LIVE_LISTENER=$(aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN --query "Listeners[?Port==\`80\`].ListenerArn" --output text)
+                    TEST_LISTENER=$(aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN --query "Listeners[?Port==\`8080\`].ListenerArn" --output text)
+                    LIVE_TG=$(aws elbv2 describe-listeners --listener-arns $LIVE_LISTENER --query "Listeners[0].DefaultActions[0].TargetGroupArn" --output text)
+                    
+                    if [ "$LIVE_TG" == "$TG_BLUE_ARN" ]; then
+                        echo "Currently on BLUE. Rolling back to GREEN."
+                        aws elbv2 modify-listener --listener-arn $LIVE_LISTENER --default-actions Type=forward,TargetGroupArn=$TG_GREEN_ARN
+                        aws elbv2 modify-listener --listener-arn $TEST_LISTENER --default-actions Type=forward,TargetGroupArn=$TG_BLUE_ARN
+                    else
+                        echo "Currently on GREEN. Rolling back to BLUE."
+                        aws elbv2 modify-listener --listener-arn $LIVE_LISTENER --default-actions Type=forward,TargetGroupArn=$TG_BLUE_ARN
+                        aws elbv2 modify-listener --listener-arn $TEST_LISTENER --default-actions Type=forward,TargetGroupArn=$TG_GREEN_ARN
+                    fi
+                '''
+            }
+        }
+    }
+}
