@@ -127,7 +127,7 @@ pipeline {
                         kubectl apply -f k8s/
                         
                         # 6. Wait for the pods to boot
-                        kubectl rollout status deployment/educonnect-app-deployment
+                        kubectl rollout status deployment/educonnect-app-deployment --insecure-skip-tls-verify
                     """
                 }
             }
